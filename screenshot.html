@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cpu-stat — Linux per-core CPU utilization monitor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1e1e2e;  /* Catppuccin Mocha base */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Fira Code', 'Cascadia Code', monospace;
+    padding: 40px;
+  }
+
+  .terminal {
+    background: #181825;  /* mantle */
+    border-radius: 12px;
+    padding: 24px 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid #313244;  /* surface0 */
+    max-width: 1020px;
+    width: 100%;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #313244;
+  }
+
+  .terminal-dot { width: 14px; height: 14px; border-radius: 50%; }
+  .dot-red { background: #f38ba8; }
+  .dot-yellow { background: #f9e2af; }
+  .dot-green { background: #a6e3a1; }
+
+  .terminal-title {
+    color: #6c7086;
+    font-size: 14px;
+    margin-left: 8px;
+    letter-spacing: 0.3px;
+  }
+  .terminal-title span { color: #a6adc8; }
+
+  .output {
+    color: #cdd6f4;
+    font-size: 14px;
+    line-height: 1.75;
+    white-space: pre;
+  }
+  .output .cmd { color: #a6adc8; font-weight: 600; }
+  .output .cmd::before { content: "$ "; color: #a6e3a1; font-weight: 600; }
+
+  .output .banner { color: #89b4fa; font-weight: 600; }
+  .output .hdr { color: #6c7086; }
+  .output .name { color: #89dceb; }
+  .output .num { color: #a6e3a1; }
+  .output .pct { color: #f5c2e7; }
+  .output .warn { color: #f9e2af; }
+  .output .high { color: #f38ba8; }
+  .output .load { color: #cba6f7; }
+  .output .dim { color: #585b70; }
+  .output .json-key { color: #89dceb; }
+  .output .json-str { color: #a6e3a1; }
+  .output .json-num { color: #f9e2af; }
+  .output .ok { color: #a6e3a1; font-weight: 600; }
+  .output .section { margin-top: 14px; }
+  .output .footer { color: #6c7086; }
+
+  .prompt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #313244;
+  }
+  .prompt-symbol { color: #a6e3a1; font-size: 14px; font-weight: 600; }
+  .prompt-text { color: #6c7086; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="terminal-header">
+    <div class="terminal-dot dot-red"></div>
+    <div class="terminal-dot dot-yellow"></div>
+    <div class="terminal-dot dot-green"></div>
+    <div class="terminal-title"><span>$</span> ./cpu-stat — Linux per-core CPU utilization monitor</div>
+  </div>
+
+  <div class="output"><span class="banner">cpu-stat — Linux per-core CPU utilization monitor (C++23)</span>
+
+<span class="cmd">./cpu-stat</span>
+  <span class="hdr">CORE       user   nice    sys   idle iowait   irq softirq  steal</span>
+  <span class="name">total</span>     <span class="num"> 2.1</span>  <span class="num"> 0.0</span>  <span class="num"> 1.6</span>  <span class="num">96.3</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu0</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 4.3</span>  <span class="num">95.7</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu1</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span> <span class="num">100.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu2</span>      <span class="num"> 4.5</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num">95.5</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu3</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 4.5</span>  <span class="num">95.5</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+
+  <span class="load">load</span>   <span class="num">0.29</span>  <span class="num">0.24</span>  <span class="num">0.15</span>  <span class="dim">running</span> <span class="num">1/1066</span>  <span class="dim">pid</span> <span class="num">69305</span>
+  <span class="load">uptime</span> <span class="num">22d 07:43:15</span>                        <span class="dim">source /proc/stat</span>
+
+<span class="cmd">./cpu-stat --watch 2</span>
+  <span class="dim">refreshing every 2s — Ctrl+C to stop</span>
+  <span class="hdr">CORE       user   nice    sys   idle iowait   irq softirq  steal</span>
+  <span class="name">total</span>     <span class="num"> 1.1</span>  <span class="num"> 0.0</span>  <span class="num"> 1.3</span>  <span class="num">97.6</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu0</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="warn">12.5</span>  <span class="num">87.5</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu1</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span> <span class="num">100.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu2</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="warn">15.0</span>  <span class="num">85.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+  <span class="name">cpu3</span>      <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span> <span class="num">100.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>  <span class="num"> 0.0</span>
+
+<span class="cmd">./cpu-stat --json</span>
+  <span class="dim">{</span>
+    <span class="dim">"cpus": [</span>
+      {<span class="json-key">"core"</span>:<span class="json-str">"cpu"</span>, <span class="json-key">"user"</span>:<span class="json-num">2.1</span>, <span class="json-key">"nice"</span>:<span class="json-num">0.0</span>, <span class="json-key">"system"</span>:<span class="json-num">1.6</span>, <span class="json-key">"idle"</span>:<span class="json-num">96.3</span>, <span class="json-key">"iowait"</span>:<span class="json-num">0.0</span>, <span class="json-key">"irq"</span>:<span class="json-num">0.0</span>, <span class="json-key">"softirq"</span>:<span class="json-num">0.0</span>, <span class="json-key">"steal"</span>:<span class="json-num">0.0</span>},
+      {<span class="json-key">"core"</span>:<span class="json-str">"cpu0"</span>, <span class="json-key">"user"</span>:<span class="json-num">0.0</span>, <span class="json-key">"system"</span>:<span class="json-num">4.3</span>, <span class="json-key">"idle"</span>:<span class="json-num">95.7</span>},
+      {<span class="json-key">"core"</span>:<span class="json-str">"cpu1"</span>, <span class="json-key">"idle"</span>:<span class="json-num">100.0</span>},
+      {<span class="json-key">"core"</span>:<span class="json-str">"cpu2"</span>, <span class="json-key">"user"</span>:<span class="json-num">4.5</span>, <span class="json-key">"idle"</span>:<span class="json-num">95.5</span>},
+      {<span class="json-key">"core"</span>:<span class="json-str">"cpu3"</span>, <span class="json-key">"system"</span>:<span class="json-num">4.5</span>, <span class="json-key">"idle"</span>:<span class="json-num">95.5</span>}
+    <span class="dim">],</span>
+    <span class="dim">"loadavg": {</span><span class="json-key">"1m"</span>:<span class="json-num">0.29</span>,<span class="json-key">"5m"</span>:<span class="json-num">0.24</span>,<span class="json-key">"15m"</span>:<span class="json-num">0.15</span><span class="dim">},</span>
+    <span class="dim">"running":1,"total":1066,"uptime":1928595.12}</span>
+  <span class="dim">}</span>
+
+<span class="cmd">./cpu-stat --selftest</span>
+  <span class="ok">15/15 selftests passed</span> <span class="dim">(parse / lines / delta / format / /proc/stat real / /proc/loadavg real)</span>
+
+<span class="footer">/proc/stat · 8 contadores por core (user, nice, system, idle, iowait, irq, softirq, steal) · colores por umbral de uso · --watch N refresco en vivo · --json · exit codes 0/2 — ./cpu-stat --help</span></div>
+
+  <div class="prompt">
+    <div class="prompt-symbol">❯</div>
+    <div class="prompt-text">cpu-stat v1.0 — C++23, zero external dependencies</div>
+  </div>
+</div>
+</body>
+</html>

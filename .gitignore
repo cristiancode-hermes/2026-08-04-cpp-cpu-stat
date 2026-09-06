@@ -1,0 +1,17 @@
+# Build artifacts
+*.o
+build/
+.cache/
+.git-askpass.sh
+.env
+*.pem
+.vscode/
+.idea/
+*.swp
+.DS_Store
+node_modules/
+cpu-stat
+modules
+cpufreq-watch
+loadavg-watch
+lsmod
